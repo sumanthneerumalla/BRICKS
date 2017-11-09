@@ -6,4 +6,6 @@ zips = {}
 
 for row in csv.reader(data):
 
-	zips[row[1]] = row[9]
+	coordinates = row[8]
+	cord_list = coordinates.split(' ')
+	zips[row[1]] = cords_list
