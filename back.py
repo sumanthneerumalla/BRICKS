@@ -1,5 +1,7 @@
 import csv
 
+# Number of districts to partition
+NUM_DISTRICTS = 8
 
 # Open CSV file that has all MD ZIP codes
 data = open('data_filtered.csv', 'rt')
@@ -14,11 +16,18 @@ zips = {}
 # Value = String Array - List of neighboring ZIP codes
 neighbors = {}
 
+# Keep track of the overall population
+total_population = 0
+
 # Read in all of the ZIP codes and their boundaries
 for row in csv.reader(data):
 	coordinates = row[8]
 	cord_list = coordinates.split(' ')
 	zips[row[1]] = cord_list
+	total_population += row[3]
+
+# Store the number of people that should be in each district
+district_population = total_population / NUM_DISTRICTS
 
 # Iterate over the dictionary of ZIPs
 for key, value in zips.items():
@@ -46,3 +55,19 @@ for key, value in zips.items():
 
 for key, value in neighbors.items():
 	print(key, ':', value)
+
+
+
+class Zip:
+	def __init__(self, name, neighbors):
+		self.name = name
+		self.neighbors = neighbors
+		self.taken = false
+
+class District:
+	def __init__(self, number):
+		self.number = number
+		self.zips = Set()
+
+	def addZip(self, zip):
+		self.zips.add(zip)
