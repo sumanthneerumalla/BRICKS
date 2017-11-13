@@ -161,3 +161,28 @@ create_districts()
 print_dictionary(districts)
 
 print_district_pops()
+
+'''
+file2 = open('output.txt', 'wt')
+
+for key, value in districts.items():
+
+	string1 = 'path: ['
+	string2 = 'new google.maps.LatLng('
+
+	for x in value:
+		for key2, value2 in zips.items():
+			if x == key2: 
+				for i in value2:
+					crd_lst = i.split(',')
+					new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
+					string1 = string1 + new_str
+	string1 += ']'
+	print(string1)
+	print()
+	file2.write(string1)
+	file2.write('\n')
+	file2.write('\n')
+
+file2.close()
+'''
