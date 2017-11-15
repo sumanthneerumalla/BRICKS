@@ -123,23 +123,26 @@ def create_districts():
 def print_dictionary(dictionary):
 	''' Print out the passed in dictionary in the form:
 		key : value '''
+	values = 0
 
 	for key, value in dictionary.items():
 		print(key, ':', value)
 		print()
-
+		values += len(value)
+	print("Number of values:", values)
 
 def print_district_pops():
 	''' Print out the population of each district '''
-
+	sum = 0
 	for key, value in districts.items():
 		district_pop = 0
 
 		for i in value:
 			district_pop += pops.get(i)
-
+			sum += pops.get(i)
 		print(key, 'population:', district_pop)
 
+	print("Sum:", sum)
 
 # Read in data from input file
 read_data()
@@ -186,3 +189,4 @@ for key, value in districts.items():
 
 file2.close()
 '''
+print("Total population:", total_population)
