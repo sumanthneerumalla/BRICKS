@@ -1,6 +1,8 @@
 '''back.py'''
 import csv
 
+# State to district
+STATE = 'MD'
 
 # Number of districts to partition
 NUM_DISTRICTS = 8
@@ -50,7 +52,7 @@ def read_data():
 	global total_population
 
 	# Open CSV file that has all MD ZIP codes
-	data = open('data_filtered.csv', 'rt')
+	data = open('Data/data-filtered/data_filtered_' + STATE + '.csv', 'rt')
 
 	# Read in all of the ZIP codes and their boundaries
 	for row in csv.reader(data):
@@ -129,7 +131,7 @@ def print_dictionary(dictionary):
 		print(key, ':', value)
 		print()
 		values += len(value)
-	print("Number of values:", values)
+
 
 def print_district_pops():
 	''' Print out the population of each district '''
@@ -152,8 +154,6 @@ pop_per_district = total_population / NUM_DISTRICTS
 # Find all of the neighbors of each ZIP code
 find_neighbors()
 
-#print_dictionary(neighbors)
-
 # Fill dictionary with correct number of districts and empty zip code list
 for x in range(NUM_DISTRICTS):
 	districts['District ' + str(x+1)] = set()
@@ -168,12 +168,12 @@ print_district_pops()
 '''
 file2 = open('output.txt', 'wt')
 
-for key, value in districts.items():
+for dist11, zip11 in districts.items():
 
 	string1 = 'path: ['
 	string2 = 'new google.maps.LatLng('
 
-	for x in value:
+	for x in zip11:
 		for key2, value2 in zips.items():
 			if x == key2: 
 				for i in value2:
@@ -189,4 +189,6 @@ for key, value in districts.items():
 
 file2.close()
 '''
+
+# Check to make sure sum of district populations equals the total population
 print("Total population:", total_population)
