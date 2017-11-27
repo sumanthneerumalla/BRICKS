@@ -58,6 +58,12 @@ def read_data():
 	for row in csv.reader(data):
 		coordinates = row[8]
 		cord_list = coordinates.split(' ')
+		
+		# Make sire there are no blank coordinates
+		for item in cord_list:
+			if item == '':
+				cord_list.remove(item)
+		
 		zips[row[1]] = cord_list
 		pops[row[1]] = int(row[3])
 		total_population += int(row[3])
@@ -166,26 +172,40 @@ print_dictionary(districts)
 print_district_pops()
 
 '''
+# Open output file for writing HTML script
 file2 = open('output.txt', 'wt')
+
+strokeColors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff']
+outerCount = 0
+innerCount = 0
 
 for dist11, zip11 in districts.items():
 
-	string1 = 'path: ['
+	string1 = '\tpath: ['
 	string2 = 'new google.maps.LatLng('
 
 	for x in zip11:
+
+		stringBegin = 'var line' + str(innerCount) + ' = new google.maps.Polyline({\n'
+		stringEnd = '\tstrokeColor: "' + str(strokeColors[outerCount]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
+
 		for key2, value2 in zips.items():
 			if x == key2: 
 				for i in value2:
 					crd_lst = i.split(',')
 					new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
 					string1 = string1 + new_str
-	string1 += ']'
-	print(string1)
-	print()
-	file2.write(string1)
-	file2.write('\n')
-	file2.write('\n')
+
+		string1 = string1[:-1]
+		string1 += '],\n'
+		file2.write(stringBegin + string1 + stringEnd)
+		file2.write('\n')
+		file2.write('\n')
+
+		string1 = 'path: ['
+		innerCount += 1
+
+	outerCount += 1
 
 file2.close()
 '''
