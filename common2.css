@@ -1,0 +1,24 @@
+
+#header{
+    font-family: sans-serif;
+    height: 50px;
+    padding-top: 15px;
+}
+
+#title{
+    font-size: 40px;
+    color: 63112f;
+    text-align: center;
+}
+
+#des{
+    font-size: 20px;
+    color: darkgray;
+    padding-left:20%;
+    padding-right:20%;
+}
+
+#pic{
+    width: 70%;
+    height: 50%;
+}
