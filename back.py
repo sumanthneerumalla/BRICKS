@@ -29,6 +29,11 @@ neighbors = {}
 # Value = String Array - List of zip codes in district
 districts = {}
 
+# Dictionary to store all of the districts and their outlining boundary
+# Key = String - District name
+# Value = String Set - Set of coordinates in the boundary
+district_boundary = {}
+
 # Dictionary to store all of the ZIP codes as keys and the coordinates of their center point as values
 # Key = String - ZIP code
 # Value = Float Tuple - Pair of coordinates
@@ -98,7 +103,7 @@ def find_neighbors():
 		neighbors[key] = neighbor_list
 
 
-def find_closest_neighbor(zip_code, taken, current_neighbors):
+def find_closest_neighbor(zip_code, taken):
 	'''Returns the closest zip code to the zip passed in that
 		is not already taken'''
 
@@ -107,7 +112,7 @@ def find_closest_neighbor(zip_code, taken, current_neighbors):
 
 	# Add all zip codes that are not taken to the potential list
 	for item in centers.keys():
-		if item not in taken and item not in current_neighbors:
+		if item not in taken and item != zip_code:
 			potential_list.append(item)
 
 	closest = potential_list[0]
@@ -118,7 +123,7 @@ def find_closest_neighbor(zip_code, taken, current_neighbors):
 		closest_center = centers.get(closest)
 		test_center = centers.get(item)
 
-		if vincenty(zip_center, closest_center).m > vincenty(zip_center, test_center).m:
+		if vincenty(zip_center, closest_center).feet > vincenty(zip_center, test_center).feet:
 			closest = item
 
 	return closest
@@ -136,14 +141,20 @@ def create_districts():
 	first_iteration = True
 
 	while len(taken) != len(zips.keys()):
+		#if len(taken) == 368:
+		#	break
 
 		# If the current population becomes larger than the population per district,
 		# save the current district and start the next one
+		print('Length of taken: ' + str(len(taken)))
+		print('Length of zips: ' + str(len(zips.keys())))
 		if current_pop >= pop_per_district:
 			districts['District ' + str(district_count)] = district_list
 			district_list = []
 			district_count += 1
 			current_pop = 0
+			current_zip = current_neighbors[0]
+			current_neighbors = []
 
 		if first_iteration:
 			first_iteration = False
@@ -162,11 +173,15 @@ def create_districts():
 			# If we're on the last zip code, add it to the last district and exit loop
 			if len(taken) == len(zips.keys()) - 1:
 				district_list.append(current_zip)
+				current_pop += pops.get(current_zip)
 				districts['District ' + str(district_count)] = district_list
 				break
 
 			if not current_neighbors:
-				current_zip = find_closest_neighbor(current_zip, taken, current_neighbors)
+				current_zip = find_closest_neighbor(current_zip, taken)
+				district_list.append(current_zip)
+				taken.append(current_zip)
+				current_pop += pops.get(current_zip)
 				n_list = neighbors.get(current_zip)
 
 				for item in n_list:
@@ -174,6 +189,7 @@ def create_districts():
 						current_neighbors.append(item)
 
 			else:
+				#current_zip = most_north(current_neighbors)
 				current_zip = current_neighbors[0]
 				current_neighbors.remove(current_zip)
 				district_list.append(current_zip)
@@ -213,6 +229,106 @@ def print_district_pops():
 
 	print("Sum:", sum)
 
+
+def outline_districts():
+	'''Union all of the zip code coordinate boundaries for
+		each district to get only the outlining boundary'''
+
+	# Iterate over the district dictionary
+	for district, zip_codes in districts.items():
+
+		current_boundary = set()
+		first_iteration = True
+
+		for item in zip_codes:
+
+			if first_iteration:
+				first_iteration = False
+				set1 = zips.get(item)
+				for i in set1:
+					current_boundary.add(i)
+				continue
+
+			set1 = set(zips.get(item))
+			print("Curent boundary before: " + str(current_boundary))
+			current_boundary = current_boundary ^ set1
+			print("Curent boundary after: " + str(current_boundary))
+			print()
+
+		district_boundary[district] = current_boundary
+
+
+def output_individuals():
+	# Open output file for writing HTML script
+	file2 = open('output.txt', 'wt')
+
+	strokeColors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff']
+	outerCount = 0
+	innerCount = 0
+
+	for dist11, zip11 in districts.items():
+
+		string1 = '\tpath: ['
+		string2 = 'new google.maps.LatLng('
+
+		for x in zip11:
+
+			stringBegin = 'var line' + str(innerCount) + ' = new google.maps.Polyline({\n'
+			stringEnd = '\tstrokeColor: "' + str(strokeColors[outerCount]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
+
+			for key2, value2 in zips.items():
+				if x == key2:
+					for i in value2:
+						crd_lst = i.split(',')
+						new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
+						string1 = string1 + new_str
+
+			string1 = string1[:-1]
+			string1 += '],\n'
+			file2.write(stringBegin + string1 + stringEnd)
+			file2.write('\n')
+			file2.write('\n')
+
+			string1 = 'path: ['
+			innerCount += 1
+
+		outerCount += 1
+
+	file2.close()
+
+
+def output_outlines():
+	# Open output file for writing HTML script
+	file2 = open('output_copy.txt', 'wt')
+
+	strokeColors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff']
+	count =  0
+
+	for district, outline in district_boundary.items():
+
+		string1 = '\tpath: ['
+		string2 = 'new google.maps.LatLng('
+
+		for x in outline:
+			crd_lst = x.split(',')
+			new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
+			string1 = string1 + new_str
+
+			stringBegin = 'var line' + str(count) + ' = new google.maps.Polyline({\n'
+			stringEnd = '\tstrokeColor: "' + str(strokeColors[count]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
+			count += 1
+
+		string1 = string1[:-1]
+		string1 += '],\n'
+		file2.write(stringBegin + string1 + stringEnd)
+		file2.write('\n')
+		file2.write('\n')
+
+		string1 = 'path: ['
+
+	file2.close()
+
+
 # Read in data from input file
 read_data()
 
@@ -228,42 +344,11 @@ print_dictionary(districts)
 
 print_district_pops()
 
-# Open output file for writing HTML script
-file2 = open('output.txt', 'wt')
+#outline_districts()
+#print_dictionary(district_boundary)
 
-strokeColors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff']
-outerCount = 0
-innerCount = 0
-
-for dist11, zip11 in districts.items():
-
-	string1 = '\tpath: ['
-	string2 = 'new google.maps.LatLng('
-
-	for x in zip11:
-
-		stringBegin = 'var line' + str(innerCount) + ' = new google.maps.Polyline({\n'
-		stringEnd = '\tstrokeColor: "' + str(strokeColors[outerCount]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
-
-		for key2, value2 in zips.items():
-			if x == key2:
-				for i in value2:
-					crd_lst = i.split(',')
-					new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
-					string1 = string1 + new_str
-
-		string1 = string1[:-1]
-		string1 += '],\n'
-		file2.write(stringBegin + string1 + stringEnd)
-		file2.write('\n')
-		file2.write('\n')
-
-		string1 = 'path: ['
-		innerCount += 1
-
-	outerCount += 1
-
-file2.close()
+output_individuals()
+#output_outlines() 
 
 # Check to make sure sum of district populations equals the total population
 print("Population per district:", pop_per_district)
