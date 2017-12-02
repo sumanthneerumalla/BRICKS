@@ -129,7 +129,7 @@ def find_closest_neighbor(zip_code, taken):
 	return closest
 
 
-def create_districts():
+def create_districts(pop_per_district):
 	''' Creates contiguous districts of relatively equal size
 		and stores them in a dictionary '''
 
@@ -141,13 +141,11 @@ def create_districts():
 	first_iteration = True
 
 	while len(taken) != len(zips.keys()):
-		#if len(taken) == 368:
-		#	break
 
 		# If the current population becomes larger than the population per district,
 		# save the current district and start the next one
-		print('Length of taken: ' + str(len(taken)))
-		print('Length of zips: ' + str(len(zips.keys())))
+		#print('Length of taken: ' + str(len(taken)))
+		#print('Length of zips: ' + str(len(zips.keys())))
 		if current_pop >= pop_per_district:
 			districts['District ' + str(district_count)] = district_list
 			district_list = []
@@ -189,7 +187,6 @@ def create_districts():
 						current_neighbors.append(item)
 
 			else:
-				#current_zip = most_north(current_neighbors)
 				current_zip = current_neighbors[0]
 				current_neighbors.remove(current_zip)
 				district_list.append(current_zip)
@@ -237,7 +234,7 @@ def outline_districts():
 	# Iterate over the district dictionary
 	for district, zip_codes in districts.items():
 
-		current_boundary = set()
+		current_boundary = []
 		first_iteration = True
 
 		for item in zip_codes:
@@ -246,14 +243,14 @@ def outline_districts():
 				first_iteration = False
 				set1 = zips.get(item)
 				for i in set1:
-					current_boundary.add(i)
+					current_boundary.append(i)
 				continue
 
-			set1 = set(zips.get(item))
-			print("Curent boundary before: " + str(current_boundary))
-			current_boundary = current_boundary ^ set1
-			print("Curent boundary after: " + str(current_boundary))
-			print()
+			set1 = zips.get(item)
+			#print("Curent boundary before: " + str(current_boundary))
+			current_boundary = set(current_boundary).symmetric_difference(set1)
+			#print("Curent boundary after: " + str(current_boundary))
+			#print()
 
 		district_boundary[district] = current_boundary
 
@@ -314,9 +311,9 @@ def output_outlines():
 			new_str = string2 + crd_lst[1] + ',' + crd_lst[0] + '),'
 			string1 = string1 + new_str
 
-			stringBegin = 'var line' + str(count) + ' = new google.maps.Polyline({\n'
-			stringEnd = '\tstrokeColor: "' + str(strokeColors[count]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
-			count += 1
+		stringBegin = 'var line' + str(count) + ' = new google.maps.Polyline({\n'
+		stringEnd = '\tstrokeColor: "' + str(strokeColors[count]) + '",\n\tstrokeOpacity: 1.0,\n\tstrokeWeight: 2,\n\tmap: map\n});'
+		count += 1
 
 		string1 = string1[:-1]
 		string1 += '],\n'
@@ -329,27 +326,33 @@ def output_outlines():
 	file2.close()
 
 
-# Read in data from input file
-read_data()
+def run(state, num_districts):
+	'''Run the program'''
+	
+	STATE = state
+	NUM_DISTRICTS = int(num_districts)
 
-pop_per_district = total_population / NUM_DISTRICTS
+	# Read in data from input file
+	read_data()
 
-# Find all of the neighbors of each ZIP code
-find_neighbors()
+	pop_per_district = total_population / NUM_DISTRICTS
 
-# Create the districts
-create_districts()
+	# Find all of the neighbors of each ZIP code
+	find_neighbors()
 
-print_dictionary(districts)
+	# Create the districts
+	create_districts(pop_per_district)
 
-print_district_pops()
+	print_dictionary(districts)
 
-#outline_districts()
-#print_dictionary(district_boundary)
+	print_district_pops()
 
-output_individuals()
-#output_outlines() 
+	outline_districts()
+	#print_dictionary(district_boundary)
 
-# Check to make sure sum of district populations equals the total population
-print("Population per district:", pop_per_district)
-print("Total population:", total_population)
+	#output_individuals()
+	output_outlines() 
+
+	# Check to make sure sum of district populations equals the total population
+	print("Population per district:", pop_per_district)
+	print("Total population:", total_population)
