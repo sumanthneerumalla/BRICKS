@@ -332,6 +332,9 @@ def run(state, num_districts):
 	STATE = state
 	NUM_DISTRICTS = int(num_districts)
 
+	print('State: ' + state)
+	print('Num_districts: ' + str(num_districts))
+
 	# Read in data from input file
 	read_data()
 
@@ -347,11 +350,11 @@ def run(state, num_districts):
 
 	print_district_pops()
 
-	outline_districts()
+	#outline_districts()
 	#print_dictionary(district_boundary)
 
 	#output_individuals()
-	output_outlines() 
+	#output_outlines() 
 
 	# Check to make sure sum of district populations equals the total population
 	print("Population per district:", pop_per_district)
