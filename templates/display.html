@@ -102,6 +102,10 @@
             for (i = 0; i < num_districts; i++){
                 var district_zips = districts['District ' + (i+1)];
 
+                console.log(num_districts);
+                console.log(i);
+                console.log(district_zips);
+
                 var single_coords = [];
 
                 for (x = 0; x < district_zips.length; x++){
@@ -119,7 +123,13 @@
             }
 
             var polygons = [];
-            colors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff'];
+            colors = ['#B8860B','#696969','#FF1493','#8B0000','#FF7F50','#32CD32','#0000CD','#9400D3','#FA8072',
+            '#6B8E23','#20B2AA','#FF69B4','#DC143C','#8A2BE2','#556B2F','#ADFF2F','#006400','#4682B4','#DA70D6',
+            '#E9967A','#9370DB','#FF4500','#87CEFA','#C0C0C0','#C71585','#BDB76B','#FFDEAD','#800000','#191970',
+            '#E6E6FA','#008080','#FF8C00','#DEB887','#CD5C5C','#FFFFFF','#000000','#808000','#8B4513','#F0E68C',
+            '#FF0000','#00FFFF','#8B008B','#FFB6C1','#90EE90','#2E8B57','#BC8F8F','#48D1CC','#5F9EA0','#DDA0DD',
+            '#FFA500','#FFFF00','#AFEEEE']
+            console.log(colors.length);
 
             for (i = 0; i < district_coordinates.length; i++){
 
@@ -141,10 +151,10 @@
                 polygons.push(new google.maps.Polygon({
                     paths: shapeCoords,
                     strokeColor: colors[i],
-                    strokeOpacity: 0.8,
+                    strokeOpacity: 0.0,
                     strokeWeight: 0,
                     fillColor: colors[i],
-                    fillOpacity: 0.5
+                    fillOpacity: 0.75
                 }));
   
                 polygons[i].setMap(map);
