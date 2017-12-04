@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dropdown</title>
+    <title>Redistrictinator</title>
     <style>
         #map {
             height: 700px;
@@ -16,6 +16,21 @@
     </form>
     <div id="map"></div>
     <script>
+
+        var map;
+        var state;
+        var num_districts;
+        var districts;
+        var zips;
+        var largest_zips;
+        var zoom_num;
+        var center_lat;
+        var center_long;
+        var district_coordinates;
+        var infoWindow;
+        var zip_polys = {};
+        var districts_pops;
+
         function initMap() {
             states = {'AL' : [7, 32.806671, -86.791130],
                       'AR' : [7, 34.969704, -92.373123],
@@ -66,22 +81,24 @@
                       'WI' : [7, 44.768543,	-89.616508],
                       'WY' : [7, 42.755966,	-107.302490],
                     };
-            var state = '{{ state }}';
-            var num_districts = '{{ num_districts }}';
-            var districts = JSON.parse('{{ districts|safe }}');
-            var zips = JSON.parse('{{ zips|safe }}');
+            state = '{{ state }}';
+            num_districts = '{{ num_districts }}';
+            districts = JSON.parse('{{ districts|safe }}');
+            zips = JSON.parse('{{ zips|safe }}');
+            largest_zips = JSON.parse('{{ largest_zips|safe }}');
+            districts_pops = JSON.parse('{{ districts_pops|safe }}');
+                
+            zoom_num = states[state][0];
+            center_lat = states[state][1];
+            center_long = states[state][2];
 
-            var zoom_num = states[state][0];
-            var center_lat = states[state][1];
-            var center_long = states[state][2];
-
-            var map = new google.maps.Map(document.getElementById('map'), {
+            map = new google.maps.Map(document.getElementById('map'), {
                 zoom: zoom_num,
-                center: {lat: center_lat, lng: center_long}
+                center: {lat: center_lat, lng: center_long},
             });
 
             
-            var district_coordinates = [];
+            district_coordinates = [];
             for (i = 0; i < num_districts; i++){
                 var district_zips = districts['District ' + (i+1)];
 
@@ -101,12 +118,9 @@
                 district_coordinates.push(single_coords);
             }
 
-            //console.log(district_coordinates);
-
             var polygons = [];
             colors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff'];
 
-            console.log(district_coordinates.length);
             for (i = 0; i < district_coordinates.length; i++){
 
                 var shapeCoords = [];
@@ -115,14 +129,14 @@
                     var temp = [];
                     for (z = 0; z < district_coordinates[i][x].length; z++){
                         var parts = district_coordinates[i][x][z].split(',');
-                        console.log(parts[1]);
-                        console.log(parts[0]);
                         temp2 = {lat: parseFloat(parts[1]), lng: parseFloat(parts[0])};
                         temp.push(temp2);
                     }
                     shapeCoords.push(temp);
                 }
             
+                zip_polys['District ' + (i+1)] = shapeCoords;
+
                 // Construct the polygon.
                 polygons.push(new google.maps.Polygon({
                     paths: shapeCoords,
@@ -134,9 +148,63 @@
                 }));
   
                 polygons[i].setMap(map);
+
+                polygons[i].addListener('mouseover', function() {
+                    var vertices = this.getPath();
+                    var district_id;
+
+                    for (f = 0; f < num_districts; f++){
+                        arr = zip_polys['District ' + (f+1)];
+
+                        for (d = 0; d < arr.length; d++){
+
+                            for (j = 0; j < arr[d].length; j++){
+
+                                var l_lat = arr[d][j]['lat'];
+                                var l_lng = arr[d][j]['lng'];
+
+                                for (h = 0; h < vertices.getLength(); h++){
+                                    verts = vertices.getAt(h);
+
+                                    if ((l_lat == verts.lat()) && (l_lng == verts.lng())){
+                                        district_id = 'District ' + (f+1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (typeof largest_zips[district_id] == 'undefined'){
+                        console.log('Undefined here');
+                        console.log('District id: ' + district_id);
+                    }
+                    console.log(district_id);
+                    var lst = largest_zips[district_id];
+                    var l_zip = lst[0];
+                    var coords = lst[1];
+                    var highest = {lat: coords[0], lng: coords[1]};
+
+                    var contentString = district_id + '<br><br>Largest zip code in district:<br>' + l_zip.toString() +
+                    '<br><br> Total population:<br>' + districts_pops[district_id];
+                    
+                    infoWindow.setContent(contentString);
+                    infoWindow.setPosition(highest);
+                    infoWindow.open(map);
+                });
             }
 
+            infoWindow = new google.maps.InfoWindow;
         }
+
+        function hideArrays(event) {
+            //infoWindow.close();
+        }
+
+        function showArrays(event) {
+            infoWindow.setContent('District 1');
+            infoWindow.setPosition(event.latLng);
+            infoWindow.open(map);
+        }
+        
     </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB154Xg4SR9Fjq9o-ty7ZZXLpumsDrOgKw&callback=initMap"></script>
     </body>

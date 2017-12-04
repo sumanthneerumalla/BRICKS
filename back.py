@@ -224,6 +224,26 @@ def output_individuals(districts, zips):
 
 	file2.close()
 
+def find_largest_zips(districts, pops, centers, largest_zips):
+	'''Find the largest zip code for each district'''
+
+	count = 1
+	for key, value in districts.items():
+
+		largest = value[0]
+
+		for i in value:
+			if pops[i] > pops[largest]:
+				largest = i
+
+		arr = []
+		arr.append(largest)
+		arr.append(centers[largest])
+		largest_zips['District ' + str(count)] = arr
+		count += 1
+
+	return largest_zips
+
 
 def run(st, num_d):
 	'''Run the program'''
@@ -269,6 +289,11 @@ def run(st, num_d):
 	# Store the number of people that should be in each district
 	pop_per_district = 0
 
+	# Dictionary to store the largest zips for each district
+	# Key = String - District number
+	# Value = String Array - Stores zip code and center coordinates
+	largest_zips = {}
+
 	state = st
 	num_districts = int(num_d)
 
@@ -283,19 +308,14 @@ def run(st, num_d):
 	# Create the districts
 	districts = create_districts(pop_per_district, districts, zips, neighbors, pops, centers)
 
-	print_dictionary(districts)
-
 	# Get the population of each district and print them
 	districts_pops = get_district_pops(districts, pops, districts_pops)
-	print_dictionary(districts_pops)
 
-	#output_individuals(districts, zips)
-
-	# Check to make sure sum of district populations equals the total population
-	print("Population per district:", pop_per_district)
-	print("Total population:", total_population)
+	largest_zips = find_largest_zips(districts, pops, centers, largest_zips)
 
 	z = json.dumps(zips)
 	d = json.dumps(districts)
+	l = json.dumps(largest_zips)
+	p = json.dumps(districts_pops)
 
-	return d, z
+	return d, z, l, p

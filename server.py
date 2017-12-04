@@ -4,8 +4,10 @@ app = Flask(__name__)
 
 districts = {}
 zips = {}
+largest_zips = {}
 state = ''
 num_districts = 0
+districts_pops = {}
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -29,14 +31,16 @@ def my_link():
 
     global districts
     global zips
+    global largest_zips
     global state
     global num_districts
+    global districts_pops
 
     if request.method == 'POST':
         return redirect(url_for('index'))
 
-    districts, zips = run(state, num_districts)
-    return render_template('display.html', districts=districts, zips=zips, state=state, num_districts=num_districts)
+    districts, zips, largest_zips, districts_pops = run(state, num_districts)
+    return render_template('display.html', districts=districts, zips=zips, state=state, num_districts=num_districts, largest_zips=largest_zips, districts_pops=districts_pops)
 
 if __name__ == '__main__':
   app.run(debug=True)
