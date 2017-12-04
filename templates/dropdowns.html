@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dropdown</title>
+</head>
+<body>
+    <form name="dropdowns" action="{{ url_for('index') }}" method='POST'>
+            <select name='state_dropdown' method="GET" action="/">
+                <option selected>AL</option>
+                {% for state in states %}
+                <option value= "{{state}}">{{ state }}</option>"
+                {% endfor %}         
+            </select>
+
+            <select name='number_dropdown' method="GET" action="/">
+                <option selected>1</option>
+                {% for number in numbers %}
+                <option value= "{{number}}">{{ number }}</option>"
+                {% endfor %}        
+            </select>
+        <input type='submit' value='Generate' onclick="">
+    </form>
+</body>
+</html>
