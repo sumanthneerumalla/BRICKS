@@ -72,9 +72,6 @@ def find_closest_neighbor(zip_code, taken, centers):
 	potential_list = []
 	zip_center = centers.get(zip_code)
 
-	print('len of centers: ' + str(len(centers.keys())))
-	print('len of taken: ' + str(len(taken)))
-
 	# Add all zip codes that are not taken to the potential list
 	for item in centers.keys():
 		if item not in taken:
@@ -352,12 +349,13 @@ def run(st, num_d):
 
 	largest_zips = find_largest_zips(districts, pops, centers, largest_zips)
 
-	print_dictionary(districts)
-	print_dictionary(districts_pops)
+	#print_dictionary(districts)
+	#print_dictionary(districts_pops)
 
 	z = json.dumps(zips)
 	d = json.dumps(districts)
 	l = json.dumps(largest_zips)
 	p = json.dumps(districts_pops)
+	c = json.dumps(centers)
 
-	return d, z, l, p
+	return d, z, l, p, c

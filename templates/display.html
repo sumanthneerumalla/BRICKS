@@ -30,6 +30,7 @@
         var infoWindow;
         var zip_polys = {};
         var districts_pops;
+        var centers;
 
         function initMap() {
             states = {'Alabama' : [7, 32.806671, -86.791130],
@@ -87,6 +88,7 @@
             zips = JSON.parse('{{ zips|safe }}');
             largest_zips = JSON.parse('{{ largest_zips|safe }}');
             districts_pops = JSON.parse('{{ districts_pops|safe }}');
+            centers = JSON.parse('{{ centers|safe }}');
                 
             zoom_num = states[state][0];
             center_lat = states[state][1];
@@ -125,7 +127,6 @@
             '#E6E6FA','#008080','#FF8C00','#DEB887','#CD5C5C','#FFFFFF','#000000','#808000','#8B4513','#F0E68C',
             '#FF0000','#00FFFF','#8B008B','#FFB6C1','#90EE90','#2E8B57','#BC8F8F','#48D1CC','#5F9EA0','#DDA0DD',
             '#FFA500','#FFFF00','#AFEEEE']
-            console.log(colors.length);
 
             for (i = 0; i < district_coordinates.length; i++){
 
@@ -142,10 +143,13 @@
                 }
             
                 zip_polys['District ' + (i+1)] = shapeCoords;
+            }
+
+            for (i = 0; i < district_coordinates.length; i++){
 
                 // Construct the polygon.
                 polygons.push(new google.maps.Polygon({
-                    paths: shapeCoords,
+                    paths: zip_polys['District ' + (i+1)],
                     strokeColor: colors[i],
                     strokeOpacity: 0.0,
                     strokeWeight: 0,
@@ -155,37 +159,15 @@
   
                 polygons[i].setMap(map);
 
-                polygons[i].addListener('mouseover', function() {
+                polygons[i].addListener('mouseover', function(event) {
                     var vertices = this.getPath();
-                    console.log('Vertices:')
-                    console.log(vertices)
                     var district_id;
 
-                    for (f = 0; f < Object.keys(districts).length; f++){
-                        arr = zip_polys['District ' + (f+1)];
+                    click_lat = event.latLng.lat();
+                    click_lng = event.latLng.lng();
 
-                        for (d = 0; d < arr.length; d++){
+                    district_id = findClosestDistrict(click_lat, click_lng);
 
-                            for (j = 0; j < arr[d].length; j++){
-
-                                var l_lat = arr[d][j]['lat'];
-                                var l_lng = arr[d][j]['lng'];
-
-                                for (h = 0; h < vertices.getLength(); h++){
-                                    verts = vertices.getAt(h);
-
-                                    if ((l_lat == verts.lat()) && (l_lng == verts.lng())){
-                                        district_id = 'District ' + (f+1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (typeof largest_zips[district_id] == 'undefined'){
-                        console.log('Undefined here');
-                        console.log('District id: ' + district_id);
-                    }
-                    console.log(district_id);
                     var lst = largest_zips[district_id];
                     var l_zip = lst[0];
                     var coords = lst[1];
@@ -195,7 +177,7 @@
                     '<br><br> Total population:<br>' + districts_pops[district_id];
                     
                     infoWindow.setContent(contentString);
-                    infoWindow.setPosition(highest);
+                    infoWindow.setPosition(event.latLng);
                     infoWindow.open(map);
                 });
             }
@@ -207,10 +189,54 @@
             //infoWindow.close();
         }
 
-        function showArrays(event) {
-            infoWindow.setContent('District 1');
-            infoWindow.setPosition(event.latLng);
-            infoWindow.open(map);
+        function findClosestDistrict(lat, lng) {
+            var zip_list = Object.keys(centers);
+            var closest = zip_list[0];
+            var closest_lat;
+            var closest_lng;
+        
+            for (i = 0; i < zip_list.length; i++){
+                closest_lat = centers[closest][0];
+                closest_lng = centers[closest][1];
+                test = zip_list[i];
+                test_lat = centers[test][0];
+                test_lng = centers[test][1];
+
+                if (closest != test){
+                    if ((getDistanceFromLatLonInKm(lat, lng, closest_lat, closest_lng)) > (getDistanceFromLatLonInKm(lat, lng, test_lat, test_lng))){
+                        closest = test;
+                    }
+                }
+            }
+            
+            var dist_num;
+            district_items = Object.keys(districts);
+            for (i = 0; i < district_items.length; i++){
+                for (x = 0; x < districts[district_items[i]].length; x++){
+                    if (districts[district_items[i]][x] == closest){
+                        dist_num = district_items[i];
+                    }
+                }
+            }
+
+            return dist_num;
+        }
+
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2-lat1);  // deg2rad below
+            var dLon = deg2rad(lon2-lon1); 
+            var a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            var d = R * c; // Distance in km
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
         }
         
     </script>
