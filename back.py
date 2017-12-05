@@ -147,6 +147,18 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 						current_neighbors.append(item)
 
 			else:
+				'''
+				# If the current population becomes larger than the population per district,
+				# save the current district and start the next one
+				if current_pop >= pop_per_district:
+					districts['District ' + str(district_count)] = district_list
+					district_list = []
+					district_count += 1
+					current_pop = 0
+					#current_zip = current_neighbors[0]
+					#current_neighbors = []
+				'''
+
 				current_zip = current_neighbors[0]
 				current_neighbors.remove(current_zip)
 				district_list.append(current_zip)
@@ -312,6 +324,8 @@ def run(st, num_d):
 	districts_pops = get_district_pops(districts, pops, districts_pops)
 
 	largest_zips = find_largest_zips(districts, pops, centers, largest_zips)
+
+	print_dictionary(districts)
 
 	z = json.dumps(zips)
 	d = json.dumps(districts)
