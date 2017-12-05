@@ -9,9 +9,22 @@
             width: 900px;
         }
     </style>
+    <link rel ="stylesheet" href= "{{ url_for('static',filename='styles/common.css') }}">
+    <link rel ="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
-    <form name="display" action="{{ url_for('my_link') }}" method='POST'>
+    <div id = "header">
+        <c href ='/'>
+            <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
+        </c>
+        <a href='about'>
+            <button id = "about">About</button>
+        </a>
+        <b href='tutorial'>
+            <button id = "tutorial">Tutorial</button>
+        </b>
+    </div>
+    <form name="display" action="{{ url_for('my_link2') }}" method='GET'>
         <input type="submit" value="Start Over" onclick="" />
     </form>
     <div id="map"></div>
@@ -159,7 +172,7 @@
   
                 polygons[i].setMap(map);
 
-                polygons[i].addListener('mouseover', function(event) {
+                polygons[i].addListener('click', function(event) {
                     var vertices = this.getPath();
                     var district_id;
 
@@ -239,6 +252,10 @@
             return deg * (Math.PI/180);
         }
         
+        function goHome(){
+            window.location.href = "/"
+        }
+
     </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB154Xg4SR9Fjq9o-ty7ZZXLpumsDrOgKw&callback=initMap"></script>
     </body>

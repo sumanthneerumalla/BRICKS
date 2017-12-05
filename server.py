@@ -23,6 +23,10 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/team/')
+def team():
+    return render_template('contact.html')
+
 @app.route('/tutorial/')
 def tutorial():
     return render_template('tutorial.html')

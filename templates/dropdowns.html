@@ -3,23 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Redistrictinator</title>
+    <link rel ="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel ="stylesheet" href= "{{ url_for('static',filename='styles/common.css') }}">
 </head>
 <body>
-    <form name="dropdowns" action="{{ url_for('index') }}" method='POST'>
-            <select name='state_dropdown' method="GET" action="/">
+    <div id = "header">
+        <c href ='/'>
+            <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
+        </c>
+        <a href='redistrictinator.me/about'>
+            <button id = "about">About</button>
+        </a>
+        <b href='redistrictinator.me/tutorial'>
+            <button id = "tutorial">Tutorial</button>
+        </b>
+    </div>
+    <p id = "instructions" style="text-align: center; font-family:sans-serif; font-size:16; color:#63112f">
+        Please select a state to district along<br>
+        with desired number of districts:<br>
+        <br>
+        <br>
+    </p>
+    <div>
+        <form  style="text-align: center;"  id = "selectStates" name="dropdowns" action="{{ url_for('my_link2') }}" method='POST'>
+            <select style="padding: 10px 26px; border-radius: 25px; border-style: solid; border-color: darkgreen" name='state_dropdown' method="GET" action="/">
                 <option selected>Alabama</option>
                 {% for state in states %}
                 <option value= "{{state}}">{{ state }}</option>"
                 {% endfor %}         
             </select>
 
-            <select name='number_dropdown' method="GET" action="/">
+            <select style="padding: 10px 26px; border-radius: 25px; border-style: solid; border-color: darkgreen"  name='number_dropdown' method="GET" action="/">
                 <option selected>1</option>
                 {% for number in numbers %}
                 <option value= "{{number}}">{{ number }}</option>"
                 {% endfor %}        
             </select>
-        <input type='submit' value='Generate' onclick="">
-    </form>
+        <input style="border-style: hidden; background-color: darkgreen; padding: 10px 26px; text-align: center; display: inline-block; font-size: 18px; font weight: bolder; border-radius: 25px; color: white"  type='submit' value='Generate' onclick="">
+        </form>
+    </div>
+    <script>
+        function goHome(){
+            window.location.href = "/"
+        }
+    </script>
 </body>
 </html>
