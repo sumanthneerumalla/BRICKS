@@ -72,9 +72,13 @@ def find_closest_neighbor(zip_code, taken, centers):
 	potential_list = []
 	zip_center = centers.get(zip_code)
 
+	print('len of centers: ' + str(len(centers.keys())))
+	print('len of taken: ' + str(len(taken)))
+
 	# Add all zip codes that are not taken to the potential list
 	for item in centers.keys():
-		if item not in taken and item != zip_code:
+		if item not in taken:
+			''' and item != zip_code'''
 			potential_list.append(item)
 
 	closest = potential_list[0]
@@ -102,10 +106,13 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 	current_pop = 0
 	first_iteration = True
 
-	while len(taken) != len(zips.keys()):
+	''' len(taken) != len(zips.keys())'''
+	while len(taken) < len(zips.keys()):
 
 		# If the current population becomes larger than the population per district,
 		# save the current district and start the next one
+		print(len(taken))
+		print(len(zips.keys()))
 		if current_pop >= pop_per_district:
 			districts['District ' + str(district_count)] = district_list
 			district_list = []
@@ -127,20 +134,28 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 					current_neighbors.append(item)
 
 		else:
-
 			# If we're on the last zip code, add it to the last district and exit loop
-			if len(taken) == len(zips.keys()) - 1:
+			if len(taken) >= len(zips.keys()):
 				district_list.append(current_zip)
+				taken.append(current_zip)
 				current_pop += pops.get(current_zip)
 				districts['District ' + str(district_count)] = district_list
 				break
 
-			if not current_neighbors:
+			while not current_neighbors:
 				current_zip = find_closest_neighbor(current_zip, taken, centers)
 				district_list.append(current_zip)
 				taken.append(current_zip)
 				current_pop += pops.get(current_zip)
 				n_list = neighbors.get(current_zip)
+
+				# If we're on the last zip code, add it to the last district and exit loop
+				if len(taken) >= len(zips.keys()):
+					district_list.append(current_zip)
+					taken.append(current_zip)
+					current_pop += pops.get(current_zip)
+					districts['District ' + str(district_count)] = district_list
+					break
 
 				for item in n_list:
 					if item not in taken and item not in current_neighbors:
@@ -166,9 +181,36 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 				current_pop += pops.get(current_zip)
 				n_list = neighbors.get(current_zip)
 
+				# If we're on the last zip code, add it to the last district and exit loop
+				if len(taken) >= len(zips.keys()):
+					district_list.append(current_zip)
+					taken.append(current_zip)
+					current_pop += pops.get(current_zip)
+					districts['District ' + str(district_count)] = district_list
+					break
+
 				for item in n_list:
 					if item not in taken and item not in current_neighbors:
 						current_neighbors.append(item)
+				
+				while not current_neighbors:
+					current_zip = find_closest_neighbor(current_zip, taken, centers)
+					district_list.append(current_zip)
+					taken.append(current_zip)
+					current_pop += pops.get(current_zip)
+					n_list = neighbors.get(current_zip)
+
+					# If we're on the last zip code, add it to the last district and exit loop
+					if len(taken) >= len(zips.keys()):
+						district_list.append(current_zip)
+						taken.append(current_zip)
+						current_pop += pops.get(current_zip)
+						districts['District ' + str(district_count)] = district_list
+						break
+
+					for item in n_list:
+						if item not in taken and item not in current_neighbors:
+							current_neighbors.append(item)
 
 	return districts
 
@@ -326,6 +368,7 @@ def run(st, num_d):
 	largest_zips = find_largest_zips(districts, pops, centers, largest_zips)
 
 	print_dictionary(districts)
+	print_dictionary(districts_pops)
 
 	z = json.dumps(zips)
 	d = json.dumps(districts)

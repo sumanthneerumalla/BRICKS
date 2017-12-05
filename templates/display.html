@@ -99,12 +99,8 @@
 
             
             district_coordinates = [];
-            for (i = 0; i < num_districts; i++){
+            for (i = 0; i < Object.keys(districts).length; i++){
                 var district_zips = districts['District ' + (i+1)];
-
-                console.log(num_districts);
-                console.log(i);
-                console.log(district_zips);
 
                 var single_coords = [];
 
@@ -161,9 +157,11 @@
 
                 polygons[i].addListener('mouseover', function() {
                     var vertices = this.getPath();
+                    console.log('Vertices:')
+                    console.log(vertices)
                     var district_id;
 
-                    for (f = 0; f < num_districts; f++){
+                    for (f = 0; f < Object.keys(districts).length; f++){
                         arr = zip_polys['District ' + (f+1)];
 
                         for (d = 0; d < arr.length; d++){
