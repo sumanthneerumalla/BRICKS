@@ -106,13 +106,10 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 	current_pop = 0
 	first_iteration = True
 
-	''' len(taken) != len(zips.keys())'''
 	while len(taken) < len(zips.keys()):
 
 		# If the current population becomes larger than the population per district,
 		# save the current district and start the next one
-		print(len(taken))
-		print(len(zips.keys()))
 		if current_pop >= pop_per_district:
 			districts['District ' + str(district_count)] = district_list
 			district_list = []
@@ -162,18 +159,6 @@ def create_districts(pop_per_district, districts, zips, neighbors, pops, centers
 						current_neighbors.append(item)
 
 			else:
-				'''
-				# If the current population becomes larger than the population per district,
-				# save the current district and start the next one
-				if current_pop >= pop_per_district:
-					districts['District ' + str(district_count)] = district_list
-					district_list = []
-					district_count += 1
-					current_pop = 0
-					#current_zip = current_neighbors[0]
-					#current_neighbors = []
-				'''
-
 				current_zip = current_neighbors[0]
 				current_neighbors.remove(current_zip)
 				district_list.append(current_zip)
@@ -242,7 +227,7 @@ def get_district_pops(districts, pops, districts_pops):
 
 def output_individuals(districts, zips):
 	# Open output file for writing HTML script
-	file2 = open('output.js', 'wt')
+	file2 = open('output.txt', 'wt')
 
 	strokeColors = ['#FF0000', '#0078FF', '#663300', '#ffff00', '#009900', '#660066', '#ff9900', '#ff99ff']
 	outerCount = 0
