@@ -64,4 +64,4 @@ def my_link():
     return render_template('display.html', districts=districts, zips=zips, state=state, num_districts=num_districts, largest_zips=largest_zips, districts_pops=districts_pops, centers=centers)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, threaded=True, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)

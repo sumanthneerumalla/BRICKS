@@ -14,15 +14,15 @@
 </head>
 <body>
     <div id = "header">
-        <c href ='/'>
+        <a href ='/'>
             <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
-        </c>
-        <a href='about'>
+        </a>
+        <a href='/about'>
             <button id = "about">About</button>
         </a>
-        <b href='tutorial'>
+        <a href='/tutorial'>
             <button id = "tutorial">Tutorial</button>
-        </b>
+        </a>
     </div>
     <form name="display" action="{{ url_for('my_link2') }}" method='GET'>
         <input type="submit" value="Start Over" onclick="" />

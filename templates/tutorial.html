@@ -13,16 +13,34 @@
             <c href ='/'>
                 <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
             </c>
-            <a href='redistrictinator.me/about'>
+            <a href='/about'>
                 <button id = "about">About</button>
             </a>
-            <b href='redistrictinator.me/tutorial'>
+            <a href='/tutorial'>
                 <button id = "tutorial">Tutorial</button>
-            </b>
+            </a>
         </div>
         <div>
             <p id="title">Gerrymandering</p>
         </div>
-        
+	<div>
+	    	<p>Walkthrough of our Gerrymandering application:<br>
+	    	When you first visit the site a home page that looks like below should appear.<br>
+		</p>
+	    	<img id = "pic" src = "{{url_for('static', filename='home.png')}}"/>
+		<p>There are various tabs to help you the user understand exactly what is happening.<br>
+		The about page explains what Gerrymandering is, while you can contact us and also <br>
+		at the various job openings in the remaining tabs.<br>
+		</p>
+		<p>
+		Now that you have an idea of what exactly is happenning,<br>
+		select a state and a number of districts, then hit generate to produce output.<br>
+		</p>
+		    <img id = "pic" src = "{{url_for('static', filename='start.png')}}"/>
+		<p>
+                By hovering over the districts, you can view the statistics.<br>
+                </p>
+		    <img id = "pic" src = "{{url_for('static', filename='map.png')}}"/>
+	</div>        
     </body>
 </html>

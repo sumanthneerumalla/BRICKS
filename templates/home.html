@@ -10,21 +10,21 @@
     </head>
     <body>
         <div id = "header">
-            <c href ='/'>
+            <a href ='/'>
                 <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
-            </c>
-            <a href='redistrictinator.me/about'>
+            </a>
+            <a href='/about'>
                 <button id = "about">About</button>
             </a>
-            <b href='redistrictinator.me/tutorial'>
+            <a href='/tutorial'>
                 <button id = "tutorial">Tutorial</button>
-            </b>
+            </a>
         </div>
         <div>
             <p id="title">Gerrymandering</p>
             <div id = "button">
                     <form name="display" action="{{ url_for('my_link2') }}" method='GET'>
-                        <input type="submit" value="Let's Get Started" onclick="" />
+                        <input type="button" id="start" value="Let's Get Started" onclick="goList()" />
                     </form>
             </div>
         </div>
@@ -32,6 +32,9 @@
             function goHome(){
                 window.location.href = "/"
             }
+	    function goList(){
+		window.location.href = "/list"
+	    }
         </script>
     </body>
 </html>

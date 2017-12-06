@@ -5,26 +5,20 @@
         <meta charset="utf-8">
         <title>The Redi</title>
         <link rel ="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel ="stylesheet" href= "common.css">
-        <link rel ="stylesheet" href= "common2.css">
+        <link rel ="stylesheet" href= "{{ url_for('static',filename='styles/common.css') }}">
+	<link rel ="stylesheet" href= "{{ url_for('static',filename='styles/common2.css') }}">
     </head>
     <body>
         <div id = "header">
-            <c href ='/'>
+            <a href ='/'>
                 <i id = "homeIcon" class="material-icons" onclick='goHome()'>home</i>
-            </c>
-            <a href='about'>
+            </a>
+            <a href='/about'>
                 <button id = "about">About</button>
             </a>
-            <b href='tutorial'>
+            <a href='/tutorial'>
                 <button id = "tutorial">Tutorial</button>
-            </b>
-            <a href='team'>
-                <button id = "team">Team</button>
             </a>
-            <b href='careers'>
-                <button id = "careers">Careers</button>
-            </b>
         </div>
         <div>
             <p id="title">Gerrymandering</p>
@@ -40,7 +34,7 @@
                 <p>
                     Fortunately, because our citizens live in a neatly ordered grid, it's easy to draw five lengthy districts  -- two for the Reds , and three for the Blues. Now, let's say instead that the Blue Party controls the state government, and they get to decide how the lines are drawn. Rather than draw districts vertically they draw them horizontally, so that in each district there are six Blues and four Reds. With a comfortable Blue majority in this state, each district elects a blue candidate to the House. The Blues win 5 seats and the Reds don't get a single one.  
                 </p>
-                <img id = "pic" src = "gerrymandering.jpg"/>
+                <img id = "pic" src = "{{url_for('static', filename='gerrymandering.jpg')}}"/>
                 <p>
                     Finally, what if the Red Party controls the state government? The Reds know they're at a numeric disadvantage.But with some creative boundary drawing they can slice the Blue population up such that they only get a majority in two districts. So despite making up 40 percent of the population, the Reds win 60 percent of the seats.   
                 </p>
